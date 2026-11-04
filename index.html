@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>糖尿病专病管理数据大屏</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- 1920×1080 固定逻辑画布，由 core.js 等比缩放 -->
+<div id="screen">
+
+  <!-- ═══════════ 顶部通栏 Header ═══════════ -->
+  <header class="header">
+    <div class="header-time">
+      <div class="clock-date" id="clock-date">----</div>
+      <div class="clock-time" id="clock-time">--:--:--</div>
+    </div>
+
+    <svg class="header-deco" viewBox="0 0 260 60" aria-hidden="true">
+      <polyline points="255,18 150,18 135,4 80,4 68,16 20,16" />
+      <polyline points="255,26 155,26 140,12 85,12" opacity=".5" />
+      <circle cx="14" cy="16" r="3" />
+    </svg>
+
+    <div class="header-banner">
+      <span class="logo-badge">
+        <img class="header-logo" src="assets/logo-brand.png" alt="JENSIO">
+      </span>
+      <div class="header-title-group">
+        <h1 class="header-title">糖尿病专病管理数据大屏</h1>
+        <div class="header-subtitle">JENSIO · Health Agent OS</div>
+      </div>
+    </div>
+
+    <svg class="header-deco flip" viewBox="0 0 260 60" aria-hidden="true">
+      <polyline points="255,18 150,18 135,4 80,4 68,16 20,16" />
+      <polyline points="255,26 155,26 140,12 85,12" opacity=".5" />
+      <circle cx="14" cy="16" r="3" />
+    </svg>
+
+    <button class="fullscreen-btn" id="btn-fullscreen" title="一键全屏">
+      <svg viewBox="0 0 24 24" width="16" height="16">
+        <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ═══════════ 主体三栏 ═══════════ -->
+  <main class="main">
+
+    <!-- ── 左栏 24%：人群画像 ── -->
+    <aside class="col col-left">
+      <section class="panel">
+        <h2 class="panel-title">
+          <span class="pt-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4" fill="currentColor"/><path d="M5 20c.8-3.8 3.6-6 7-6s6.2 2.2 7 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          </span>人群画像<i class="pt-block"></i>
+        </h2>
+        <div class="panel-body">
+
+          <!-- 1. 体重分布 -->
+          <div class="sub">
+            <h3 class="sub-title">体重分布</h3>
+            <div class="sub-body">
+              <div class="wd-wrap">
+                <div class="wd-ring">
+                  <svg class="wd-svg" viewBox="0 0 200 200">
+                    <defs>
+                      <!-- 品牌蓝→青绿渐变（JENSIO 主色系） -->
+                      <linearGradient id="wd-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#2AA0F0"/>
+                        <stop offset="100%" stop-color="#2EC8A8"/>
+                      </linearGradient>
+                    </defs>
+                    <!-- 外层刻度虚线环 -->
+                    <circle class="wd-tick-outer" cx="100" cy="100" r="92"/>
+                    <!-- 内层刻度虚线环 -->
+                    <circle class="wd-tick-inner" cx="100" cy="100" r="78"/>
+                    <!-- 进度环底槽 -->
+                    <circle class="wd-track" cx="100" cy="100" r="85"/>
+                    <!-- 实心品牌渐变进度环（stroke-dasharray 由 JS 按占比驱动） -->
+                    <circle class="wd-progress" id="wd-progress" cx="100" cy="100" r="85"/>
+                  </svg>
+                  <div class="wd-center">
+                    <div class="wd-num" id="wd-total">0</div>
+                    <div class="wd-cap">总评估人数</div>
+                  </div>
+                </div>
+                <div class="wd-tags">
+                  <div class="wd-tag tl">
+                    <svg class="wd-drop" viewBox="0 0 24 24"><path d="M12 2C12 2 5 10.5 5 15a7 7 0 0 0 14 0C19 10.5 12 2 12 2z"/></svg>
+                    <b id="wd-under">0</b><span>体重过轻(人)</span>
+                  </div>
+                  <div class="wd-tag tr">
+                    <svg class="wd-drop" viewBox="0 0 24 24"><path d="M12 2C12 2 5 10.5 5 15a7 7 0 0 0 14 0C19 10.5 12 2 12 2z"/></svg>
+                    <b id="wd-normal">0</b><span>体重正常(人)</span>
+                  </div>
+                  <div class="wd-tag bl">
+                    <svg class="wd-drop" viewBox="0 0 24 24"><path d="M12 2C12 2 5 10.5 5 15a7 7 0 0 0 14 0C19 10.5 12 2 12 2z"/></svg>
+                    <b id="wd-obese">0</b><span>肥胖(人)</span>
+                  </div>
+                  <div class="wd-tag br">
+                    <svg class="wd-drop" viewBox="0 0 24 24"><path d="M12 2C12 2 5 10.5 5 15a7 7 0 0 0 14 0C19 10.5 12 2 12 2z"/></svg>
+                    <b id="wd-over">0</b><span>超重(人)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. 肾功能、白蛋白尿分布（真实口径：UACR A2/A3 异常、eGFR<60） -->
+          <div class="sub">
+            <h3 class="sub-title">肾功能、白蛋白尿分布</h3>
+            <div class="chart chart-renal" id="chart-renal"></div>
+          </div>
+
+          <!-- 3. 性别、年龄分布 -->
+          <div class="sub">
+            <h3 class="sub-title">性别、年龄分布</h3>
+            <div class="ga-wrap">
+              <div class="ga-item">
+                <div class="chart chart-gender" id="chart-gender"></div>
+              </div>
+              <div class="ga-item">
+                <div class="chart chart-age" id="chart-age"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. 疾病分布 -->
+          <div class="sub sub-grow">
+            <h3 class="sub-title">疾病分布</h3>
+            <div class="table-scroll" id="table-disease"></div>
+          </div>
+
+        </div>
+      </section>
+    </aside>
+
+    <!-- ── 中栏 50%：管理概况 + 院内/居家 ── -->
+    <div class="col col-center">
+
+      <!-- 上层：管理概况 -->
+      <section class="panel panel-overview">
+        <h2 class="panel-title">
+          <span class="pt-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 19h16M6.5 15v-4M11 15V7M15.5 15v-6M20 15V9.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>
+          </span>管理概况<i class="pt-block"></i>
+        </h2>
+        <div class="panel-body panel-body-overview">
+          <div class="kpi-row">
+            <div class="kpi-card kpi-violet">
+              <div class="kpi-info">
+                <div class="kpi-name">总计管理人数</div>
+                <div class="kpi-value" id="kpi-managed">0</div>
+                <div class="kpi-sub">今日入组 <b id="kpi-today-enroll">0</b></div>
+              </div>
+              <svg class="kpi-cube" viewBox="0 0 80 92">
+                <polygon points="40,2 78,24 40,46 2,24" class="cube-top"/>
+                <polygon points="2,24 40,46 40,90 2,68" class="cube-left"/>
+                <polygon points="78,24 40,46 40,90 78,68" class="cube-right"/>
+              </svg>
+            </div>
+            <div class="kpi-card kpi-amber">
+              <div class="kpi-info">
+                <div class="kpi-name">总计就诊登记人次</div>
+                <div class="kpi-value" id="kpi-visits">0</div>
+                <div class="kpi-sub">今日就诊 <b id="kpi-today-visit">0</b></div>
+              </div>
+              <svg class="kpi-cube" viewBox="0 0 80 92">
+                <polygon points="40,2 78,24 40,46 2,24" class="cube-top"/>
+                <polygon points="2,24 40,46 40,90 2,68" class="cube-left"/>
+                <polygon points="78,24 40,46 40,90 78,68" class="cube-right"/>
+              </svg>
+            </div>
+            <div class="kpi-card kpi-blue">
+              <div class="kpi-info">
+                <div class="kpi-name">总计CGM监测人数</div>
+                <div class="kpi-value" id="kpi-app">0</div>
+                <div class="kpi-sub">今日新增 <b id="kpi-today-cgm">0</b></div>
+              </div>
+              <svg class="kpi-cube" viewBox="0 0 80 92">
+                <polygon points="40,2 78,24 40,46 2,24" class="cube-top"/>
+                <polygon points="2,24 40,46 40,90 2,68" class="cube-left"/>
+                <polygon points="78,24 40,46 40,90 78,68" class="cube-right"/>
+              </svg>
+            </div>
+            <div class="kpi-card kpi-teal">
+              <div class="kpi-info">
+                <div class="kpi-name">复诊比例</div>
+                <div class="kpi-value" id="kpi-revisit">0<i class="kpi-unit">%</i></div>
+              </div>
+              <svg class="kpi-cube" viewBox="0 0 80 92">
+                <polygon points="40,2 78,24 40,46 2,24" class="cube-top"/>
+                <polygon points="2,24 40,46 40,90 2,68" class="cube-left"/>
+                <polygon points="78,24 40,46 40,90 78,68" class="cube-right"/>
+              </svg>
+            </div>
+          </div>
+          <div class="chart chart-trend" id="chart-trend"></div>
+        </div>
+      </section>
+
+      <!-- 下层：院内 / 居家 -->
+      <div class="center-bottom">
+        <section class="panel panel-hospital">
+          <h2 class="panel-title">
+            <span class="pt-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M12 9v6M9 12h6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+            </span>院内数据汇总<i class="pt-block"></i>
+          </h2>
+          <div class="table-scroll" id="table-hospital"></div>
+        </section>
+
+        <section class="panel panel-home">
+          <h2 class="panel-title">
+            <span class="pt-icon">
+              <svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M5.5 10v9h13v-9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>
+            </span>居家数据汇总<i class="pt-block"></i>
+          </h2>
+          <div class="home-top">
+            <div class="home-ring">
+              <div class="chart chart-home-ring" id="chart-diet"></div>
+              <div class="home-ring-text">
+                <b id="diet-times">0</b>
+                <span>居家饮食打卡(次)</span>
+              </div>
+            </div>
+            <div class="home-ring">
+              <div class="chart chart-home-ring" id="chart-sport"></div>
+              <div class="home-ring-text">
+                <b id="sport-times">0</b>
+                <span>居家运动打卡(次)</span>
+              </div>
+            </div>
+          </div>
+          <div class="table-scroll table-home" id="table-home"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ── 右栏 26%：管理成果 ── -->
+    <aside class="col col-right">
+      <section class="panel">
+        <h2 class="panel-title">
+          <span class="pt-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 17l5-5 4 3 7-8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7h5v5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>管理成果<i class="pt-block"></i>
+        </h2>
+        <div class="panel-body">
+
+          <!-- 1. 血糖控制成效（真实疗效口径） -->
+          <div class="sub">
+            <h3 class="sub-title">血糖控制成效</h3>
+            <div class="sub-body">
+              <div class="wl-hero">
+                <div class="wl-caption">糖化血红蛋白达标率（&lt;7%）</div>
+                <div class="wl-num" id="gc-rate">0%</div>
+              </div>
+              <div class="wl-caps">
+                <div class="capsule">
+                  <svg class="capsule-icon" viewBox="0 0 28 32">
+                    <ellipse cx="14" cy="6" rx="10" ry="4.6"/>
+                    <path d="M4 6v20c0 2.5 4.5 4.6 10 4.6s10-2.1 10-4.6V6"/>
+                    <ellipse cx="14" cy="6" rx="5" ry="2.1" opacity=".55"/>
+                  </svg>
+                  <div class="capsule-info">
+                    <span class="capsule-label">糖化达标人数</span>
+                    <b class="capsule-value" id="gc-count">0</b>
+                  </div>
+                </div>
+                <div class="capsule">
+                  <svg class="capsule-icon" viewBox="0 0 28 32">
+                    <ellipse cx="14" cy="6" rx="10" ry="4.6"/>
+                    <path d="M4 6v20c0 2.5 4.5 4.6 10 4.6s10-2.1 10-4.6V6"/>
+                    <ellipse cx="14" cy="6" rx="5" ry="2.1" opacity=".55"/>
+                  </svg>
+                  <div class="capsule-info">
+                    <span class="capsule-label">达标率较基线提升</span>
+                    <b class="capsule-value" id="gc-delta">0</b>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. 体重随访均值 (KG)（第 1~6 次随访真实均值） -->
+          <div class="sub">
+            <h3 class="sub-title">体重随访均值 (KG)</h3>
+            <div class="chart chart-loss" id="chart-weight-traj"></div>
+          </div>
+
+          <!-- 3. 收缩压随访均值 (mmHg) -->
+          <div class="sub">
+            <h3 class="sub-title">收缩压随访均值 (mmHg)</h3>
+            <div class="chart chart-loss" id="chart-sbp-traj"></div>
+          </div>
+
+          <!-- 4. 主要指标达标率对比（基线 vs 末次） -->
+          <div class="sub">
+            <h3 class="sub-title">主要指标达标率对比</h3>
+            <div class="chart chart-standard" id="chart-standard"></div>
+          </div>
+
+        </div>
+      </section>
+    </aside>
+
+  </main>
+</div>
+
+<!-- 普通 script 按序加载（file:// 双击即开，兼容无 ES Module 场景） -->
+<script src="lib/echarts.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/derived-data.js"></script>
+<script src="js/core.js"></script>
+<script src="js/charts-left.js"></script>
+<script src="js/charts-center.js"></script>
+<script src="js/charts-right.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+# 参考资料（原始设计素材，不入库）
+公司LOGO.png
+糖尿病*大屏.png
+_dash_ref.jpg
+
+# 系统临时文件
+*.log
+.DS_Store
+Thumbs.db
