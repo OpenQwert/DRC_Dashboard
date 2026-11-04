@@ -7,3 +7,6 @@ _dash_ref.jpg
 *.log
 .DS_Store
 Thumbs.db
+
+# 打包产物
+dist/
